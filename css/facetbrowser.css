@@ -20,3 +20,5 @@
 .pane-ding-facetbrowser a:hover { color: #000; text-decoration: none; }
 
 .pane-ding-facetbrowser .expand { margin-left: 10px; }
+
+.pane-ding-facetbrowser a.unselect { float: left; }

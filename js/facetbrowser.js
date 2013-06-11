@@ -55,8 +55,9 @@
 
     var main_element = $(Drupal.settings.dingFacetBrowser.mainElement);
 
+    var id = 0;
     // Add show more button to each facet group and hide some terms.
-    main_element.find('fieldset.form-wrapper').each(function() {
+    main_element.find('fieldset').each(function() {
       var facetGroup = $(this);
 
       // Limit the number of visible terms in the group.
@@ -68,20 +69,22 @@
 
       // Add expand button, if there are more to show.
       if (terms_not_checked.length > number_of_terms) {
-        facetGroup.append('<a href="#" class="expand expand-more" id="expand_more">' + Drupal.t('Show more') + '</a>');
+        facetGroup.append('<a href="#" class="expand expand-more" id="expand_more_' + (id++) + '">' + Drupal.t('Show more') + '</a>');
+        // If there are selected elemends show "Show more" inline.
+        if (facetGroup.find('.selected-checkbox-group').length) {
+          facetGroup.find('.expand').css('display', 'inline');
+        }
       }
 
       // Add some classes to checkbox wrappers.
       facetGroup.find('.form-type-checkbox input:checked').parent().addClass('selected-checkbox');
       facetGroup.find('.form-type-checkbox input:not(:checked)').parent().addClass('unselected-checkbox');
 
-      // Add some div wrappers around selected and unselected checkboxes.
-      facetGroup.find('.selected-checkbox').wrapAll('<div class="selected-checkbox-group" />');
-      facetGroup.find('.unselected-checkbox').wrapAll('<div class="unselected-checkbox-group" />');
-
       // Add a unselect all link.
       if (facetGroup.find('.selected-checkbox-group').length) {
-        facetGroup.find('.selected-checkbox-group').append('<a href="#" class="unselect">' + Drupal.t('Remove all selected') + '</a>');
+        facetGroup.append('<a href="#" class="unselect" >' + Drupal.t('Remove all selected') + '</a>');
+        facetGroup.find('legend').addClass('active');
+        facetGroup.find('.fieldset-wrapper').css('display', 'block');
       }
 
     });
@@ -96,22 +99,25 @@
       var facetGroup = $(clickedKey).parent();
       var span_id_more = 'expand_more_' + facetGroup.attr('id');
       var span_id_less = 'expand_less_' + facetGroup.attr('id');
-
-      facetGroup.find('.form-type-checkbox.unselected-checkbox:' + (clickedKey.id == 'expand_more' ? 'hidden': 'visible')).each(function(count, facetElement) {
-        if (clickedKey.id == 'expand_more' && count < Drupal.settings.dingFacetBrowser.number_of_terms) {
+      var facetId = clickedKey.id.split('expand_more_');
+      var expandMoreStr = 'expand_more_' + facetId[1];
+      var expandLessStr = 'expand_less_' + facetId[1];
+   
+      facetGroup.find('.form-type-checkbox.unselected-checkbox:' + (clickedKey.id == expandMoreStr ? 'hidden': 'visible')).each(function(count, facetElement) {
+        if (clickedKey.id == expandMoreStr && count < Drupal.settings.dingFacetBrowser.number_of_terms) {
           $(facetElement).slideDown('fast', function() {
             if (facetGroup.find('.form-type-checkbox.unselected-checkbox:visible').size() >= Drupal.settings.dingFacetBrowser.number_of_terms &&
-                facetGroup.find('#expand_less').size() === 0 &&
+                facetGroup.find('#' + expandLessStr).size() === 0 &&
                 count % Drupal.settings.dingFacetBrowser.number_of_terms === 0) {
-              facetGroup.append('<a href="#" class="expand expand-less" id="expand_less">' + Drupal.t('Show less') + '</a>');
+              facetGroup.append('<a href="#" class="expand expand-less" id="' + expandLessStr + '">' + Drupal.t('Show less') + '</a>');
             }
           });
         }
-        else if (clickedKey.id == 'expand_less' && count >= Drupal.settings.dingFacetBrowser.number_of_terms) {
+        else if (clickedKey.id == expandLessStr && count >= Drupal.settings.dingFacetBrowser.number_of_terms) {
           $(facetElement).slideUp('fast', function() {
             if (facetGroup.find('.form-type-checkbox.unselected-checkbox:visible').size() == Drupal.settings.dingFacetBrowser.number_of_terms &&
-                facetGroup.find('#expand_less:visible')) {
-              facetGroup.find('#expand_less').fadeOut().remove();
+                facetGroup.find('#' + expandLessStr +':visible')) {
+              facetGroup.find('#' + expandLessStr).fadeOut().remove();
             }
           });
         }
@@ -120,13 +126,13 @@
       // Need to make sure we have the correct amount of unselected checkboxes to check against when wanting to remove the show more link.
       var unselectedSize = facetGroup.attr('count')-facetGroup.find('.form-type-checkbox.selected-checkbox').size();
 
-      if ((facetGroup.find('.form-type-checkbox.unselected-checkbox:visible').size() >= unselectedSize) && (clickedKey.id == 'expand_more')) {
-          facetGroup.find('#expand_more').remove();
+      if ((facetGroup.find('.form-type-checkbox.unselected-checkbox:visible').size() >= unselectedSize) && (clickedKey.id == expandMoreStr)) {
+          facetGroup.find('#' + expandMoreStr).remove();
       }
 
-      if (clickedKey.id == 'expand_less'){
-        if (!(facetGroup.find('#expand_more').length)) {
-          facetGroup.append('<span class="expand expand-more" id="expand_more">' + Drupal.t('Show more') + '</span>');
+      if (clickedKey.id == '#' + expandLessStr) {
+        if (!(facetGroup.find('#' + expandMoreStr)).length) {
+          facetGroup.append('<span class="expand expand-more" id=' + expandMoreStr + '>' + Drupal.t('Show more') + ' '+ '</span>');
         }
       }
 
