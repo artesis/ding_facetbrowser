@@ -21,4 +21,14 @@
 
 .pane-ding-facetbrowser .expand { margin-left: 10px; }
 
-.pane-ding-facetbrowser a.unselect { float: left; }
+.pane-ding-facetbrowser a.unselect {
+  float: left;
+}
+
+.pane-ding-facetbrowser .btn-toolbar a.unselect {
+  margin-left: 0px;
+}
+
+.pane-ding-facetbrowser .fieldset-wrapper .btn-group {
+  float: right;
+}
