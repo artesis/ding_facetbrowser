@@ -205,7 +205,8 @@ function ding_facetbrowser_elements($facets = FALSE, $search = FALSE) {
           }
           $output .= '</div>';
         }
-        $output .= '</div></div>';
+        $output .= '</div>';
+        $output .= '</div>'; // Wrapper.
         $output .= '</fieldset>';
       }
       $i++; // Loop is done so time to up that counter
