@@ -15,16 +15,6 @@
   background: transparent url(../img/spinner.gif) no-repeat 50% 50%;
 }
 
-/* facet link color */
-.pane-ding-facetbrowser a,.pane-ding-facetbrowser a:visited { color: #000; }
-.pane-ding-facetbrowser a:hover { color: #000; text-decoration: none; }
-
-.pane-ding-facetbrowser .expand { margin-left: 10px; }
-
-.pane-ding-facetbrowser a.unselect {
-  float: left;
-}
-
 .pane-ding-facetbrowser .btn-toolbar a.unselect {
   margin-left: 0px;
 }
