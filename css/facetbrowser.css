@@ -17,6 +17,7 @@
 
 .pane-ding-facetbrowser .btn-toolbar a.unselect {
   margin-left: 0px;
+  float: left;
 }
 
 .pane-ding-facetbrowser .fieldset-wrapper .btn-group {
