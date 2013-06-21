@@ -139,11 +139,11 @@
         facetGroup.find('.fieldset-wrapper').append(
           '<div class="btn-toolbar">' +
           '<div class="btn-group ">' +
-          '<a class="btn btn-artesis-turquoise show-more" href="#" data-facetgroup="' + facetGroup.attr('id') + '">' +
-          '<i class="icon-white icon-arrow-down"></i> ' + Drupal.t('Show more') +
+          '<a class="btn btn-artesis-turquoise show-more" href="#" data-facetgroup="' + facetGroup.attr('id') + '" title="' + Drupal.t('Show more') + '">' +
+          '<i class="icon-white icon-arrow-down"></i> ' +
           '</a>' +
-          '<a class="btn btn-artesis-turquoise show-less disabled" href="#"data-facetgroup="' + facetGroup.attr('id') + '">' +
-          '<i class="icon-white icon-arrow-up"></i> ' + Drupal.t('Show less') +
+          '<a class="btn btn-artesis-turquoise show-less disabled" href="#"data-facetgroup="' + facetGroup.attr('id') + '" title="' + Drupal.t('Show less') + '">' +
+          '<i class="icon-white icon-arrow-up"></i> ' +
           '</a>' +
           '</div>' +
           '</div>'
