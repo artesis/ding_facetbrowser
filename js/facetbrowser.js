@@ -2,7 +2,10 @@
 
   Drupal.behaviors.facetbrowser = {
     attach: function(context, settings) {
-      Drupal.FoldFacetGroup();
+      // Run once on document load.
+      if (context == document) {
+        Drupal.FoldFacetGroup();
+      };
 
       var main_element = $(Drupal.settings.dingFacetBrowser.mainElement);
 
@@ -93,7 +96,7 @@
    */
   Drupal.FacetbrowserShowLess = function(e) {
     e.preventDefault();
-    
+
     var $this = $(this);
     if ($this.hasClass('disabled')) {
       return;
