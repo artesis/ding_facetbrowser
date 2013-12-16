@@ -359,3 +359,22 @@ function ding_facetbrowser_block_view($delta = FALSE) {
   return $block;
 }
 
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function ding_facetbrowser_theme_registry_alter(&$theme_registry) {
+  $theme_registry['panels_pane']['preprocess functions'][] = '_ding_facetbrowser_translate_pane_title';
+}
+
+/**
+ * Translate pane title.
+ *
+ * @param attay $vars
+ *   Pane data.
+ */
+function _ding_facetbrowser_translate_pane_title(&$vars) {
+  // Translate only overriden title of ding_facetbrowser.
+  if ($vars['pane']->type == 'ding_facetbrowser' && $vars['pane']->configuration['override_title']) {
+    $vars['title'] = t($vars['title']);
+  }
+}
