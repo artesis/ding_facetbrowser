@@ -166,7 +166,7 @@ function ding_facetbrowser_elements($facets = FALSE, $search = FALSE) {
           }
         }
 
-        $output .= '<fieldset id="' . str_replace(".", "-", t($facet->name));
+        $output .= '<fieldset id="' . drupal_html_id($facet->name);
         $output .= '" data-count="' . count($facet->terms);
         $output .= '" class="form-wrapper">';
         $output .= ' <legend><span class="fieldset-legend">' ;
