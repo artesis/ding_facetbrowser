@@ -2,7 +2,7 @@
 
   Drupal.behaviors.facetbrowser = {
     attach: function(context, settings) {
-      Drupal.FoldFacetGroup();
+      Drupal.FoldFacetGroup(context);
 
       var main_element = $(Drupal.settings.dingFacetBrowser.mainElement);
 
@@ -51,9 +51,9 @@
   /**
    * Fold facet groups to show only x unselected checkboxes per group.
    */
-  Drupal.FoldFacetGroup = function() {
+  Drupal.FoldFacetGroup = function(context) {
 
-    var main_element = $(Drupal.settings.dingFacetBrowser.mainElement);
+    var main_element = $(Drupal.settings.dingFacetBrowser.mainElement, context);
 
     // Add show more button to each facet group and hide some terms.
     main_element.find('fieldset.form-wrapper').each(function() {
