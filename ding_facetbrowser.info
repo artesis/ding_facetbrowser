@@ -3,6 +3,11 @@ description = Implements a facetbrowser for search results. If a module implemen
 version = "7.x-1.11"
 core = 7.x
 package = Ding!
+dependencies[] = features
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:1
+features[variable][] = ding_facetbrowser_facets
 files[] = ding_facetbrowser.module
 files[] = ding_facetbrowser.test
 
