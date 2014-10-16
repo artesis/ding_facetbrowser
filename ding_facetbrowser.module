@@ -80,6 +80,9 @@ function ding_facetbrowser_ctools_plugin_api($module, $api) {
   if ($module == 'page_manager' && $api == 'pages_default') {
     return array('version' => 1);
   }
+  if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => "1");
+  }
 }
 /**
  * Create a custom form with checkbox elements for facets and ajax callback
