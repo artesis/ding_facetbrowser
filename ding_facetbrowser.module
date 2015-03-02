@@ -80,6 +80,9 @@ function ding_facetbrowser_ctools_plugin_api($module, $api) {
   if ($module == 'page_manager' && $api == 'pages_default') {
     return array('version' => 1);
   }
+  if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => "1");
+  }
 }
 /**
  * Create a custom form with checkbox elements for facets and ajax callback
@@ -89,14 +92,9 @@ function ding_facetbrowser_ctools_plugin_api($module, $api) {
  * @param array $facets
  * @return array $form
  */
-function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = FALSE) {
+function ding_facetbrowser_elements($facets = FALSE, $search = FALSE) {
   global $base_root;
-
-  $form['search_key'] = array(
-    '#type'  => 'hidden',
-    '#value' => $search,
-  );
-
+  $output = '';
   // Building the facets fieldsets
   $i = 0;
   $facet_show_count = variable_get('ding_facetbrowser_showcount');
@@ -113,14 +111,10 @@ function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = 
       $facet_class = ($i >= $facet_show_count) ? 'hidden' : 'visible';
 
       if (count($facet->terms) > 0) {
-        $form[$facet->name] = array(
-          '#type' => 'fieldset',
-          '#title' => check_plain($configured_facet['title']),
-          '#attributes'  => array(
-            'id' => str_replace('.', '-', $facet->name),
-            'data-count' => count($facet->terms),
-          ),
-        );
+
+        if (empty($configured_facet['sorting'])) {
+          $configured_facet['sorting'] = NULL;
+        }
 
         switch ($configured_facet['sorting']) {
           case 'alphabetical':
@@ -136,7 +130,6 @@ function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = 
             krsort($facet->terms, SORT_NUMERIC);
             break;
           default:
-
             break;
         }
 
@@ -174,20 +167,59 @@ function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = 
               ),
             ));
           }
-
-          $form[$facet->name][$element_name] = array(
-            '#type'          => 'checkboxes',
-            '#options'       => $selected + $not_selected,
-            '#default_value' => $default_values,
-            '#disabled'      => TRUE,
-          );
         }
+
+        $output .= '<fieldset id="' . drupal_html_id($facet->name);
+        $output .= '" data-count="' . count($facet->terms);
+        $output .= '" class="form-wrapper">';
+        $output .= ' <legend><span class="fieldset-legend">' ;
+        $output .= t($configured_facet['title']) . '</span></legend>';
+        $output .= '<div class="fieldset-wrapper"> <div id="edit-';
+        $output .= $facet->name . '" class="form-checkboxes">';
+        $title = t($configured_facet['title']);
+        if (count($selected) > 0) {
+          $output .= '<div class="selected-checkbox-group">';
+          foreach ($selected as $key => $value) {
+            $output .= '<div class="form-item form-type-checkbox form-item-';
+            $output .= $facet->name . '-' . $key;
+            $output .= ' form-disabled selected-checkbox">';
+            $output .= '<input disabled="disabled" checked="checked "';
+            $output .= 'type="checkbox" id="edit-';
+            $output .=  $facet->name . '-' . $key . '" name="' . $facet->name;
+            $output .= '[' . $key . ']" value="' . $key;
+            $output .= '" class="form-checkbox">';
+            $output .= '<label class="option" for="edit-' . $facet->name . '-';
+            $output .= $key . '">' . $value . '</label></div>';
+          }
+          $output .= '</div>';
+        }
+        if (count($not_selected) > 0) {
+          $output .= '<div class="unselected-checkbox-group">';
+          foreach ($not_selected as $key => $value) {
+            $output .= '<div class="form-item form-type-checkbox form-item-';
+            $output .= $facet->name . '-' . $key;
+            $output .= ' form-disabled unselected-checkbox">';
+            $output .= '<input disabled="disabled" type="checkbox" id="edit-';
+            $output .=  $facet->name . '-' . $key . '" name="' . $facet->name;
+            $output .= '[' . $key . ']" value="' . $key;
+            $output .= '" class="form-checkbox">';
+            $output .= '<label class="option" for="edit-' . $facet->name . '-';
+            $output .= $key . '">' . $value . '</label></div>';
+          }
+          $output .= '</div>';
+        }
+        $output .= '</div>';
+        $output .= '</div>'; // Wrapper.
+        $output .= '</fieldset>';
       }
       $i++; // Loop is done so time to up that counter
     }
   }
 
-  return $form;
+  return array(
+    '#type' => 'markup',
+    '#markup' => $output,
+  );
 }
 
 /**
@@ -273,8 +305,8 @@ function theme_facetbrowser($search_result = FALSE) {
   $searchkey = array_shift($search_result);
   $elements = array();
   if (is_array($all_facets)) {
-    $form = drupal_get_form('ding_facetbrowser_form', $all_facets, $searchkey);
-    $elements[] = drupal_render($form);
+    $facet = ding_facetbrowser_elements($all_facets, $searchkey);
+    $elements[] = drupal_render($facet);
   }
   return implode('', $elements);
 }
@@ -310,7 +342,7 @@ function ding_facetbrowser_block_view($delta = FALSE) {
     $results = module_invoke($executed_search_module, 'ding_facetbrowser');
     if (is_object($results)) {
       foreach ($results->facets as $result) {
-        if (count($result->terms) == TRUE) {
+        if (count($result->terms)) {
           $content_in_facet = TRUE;
           break;
         }
@@ -330,3 +362,22 @@ function ding_facetbrowser_block_view($delta = FALSE) {
   return $block;
 }
 
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function ding_facetbrowser_theme_registry_alter(&$theme_registry) {
+  $theme_registry['panels_pane']['preprocess functions'][] = '_ding_facetbrowser_translate_pane_title';
+}
+
+/**
+ * Translate pane title.
+ *
+ * @param attay $vars
+ *   Pane data.
+ */
+function _ding_facetbrowser_translate_pane_title(&$vars) {
+  // Translate only overriden title of ding_facetbrowser.
+  if ($vars['pane']->type == 'ding_facetbrowser' && $vars['pane']->configuration['override_title']) {
+    $vars['title'] = t($vars['title']);
+  }
+}
