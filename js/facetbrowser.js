@@ -136,19 +136,19 @@
         terms_not_checked.slice(number_of_terms).parent().hide();
       }
 
+      // Add toolbar and group buttons wrapper.
+      facetGroup.find('.fieldset-wrapper').append(
+        '<div class="btn-toolbar"><div class="btn-group"></div></div>'
+      );
       // Add expand buttons, if there are more to show.
       if (terms_not_checked.length > number_of_terms) {
-        facetGroup.find('.fieldset-wrapper').append(
-          '<div class="btn-toolbar">' +
-          '<div class="btn-group ">' +
+        facetGroup.find('.fieldset-wrapper .btn-toolbar .btn-group').append(
           '<a class="btn btn-artesis-turquoise show-more" href="#" data-facetgroup="' + facetGroup.attr('id') + '" title="' + Drupal.t('Show more') + '">' +
           '<i class="icon-white icon-arrow-down"></i> ' +
           '</a>' +
           '<a class="btn btn-artesis-turquoise show-less disabled" href="#"data-facetgroup="' + facetGroup.attr('id') + '" title="' + Drupal.t('Show less') + '">' +
           '<i class="icon-white icon-arrow-up"></i> ' +
-          '</a>' +
-          '</div>' +
-          '</div>'
+          '</a>'
         );
       }
 
