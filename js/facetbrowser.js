@@ -191,7 +191,7 @@
         element.find('input').click();
 
         // Find the facets to be deselected and generate new URL.
-        var facetMatch = element.find('a').attr('href').match(/&facets\[\]=-facet.*/);
+        var facetMatch = element.find('a').attr('href').match(/(&facets(.*))/);
         checkedFacets += facetMatch[0];
         if (checkedFacets) {
           $('body').prepend('<div class="facetbrowser_overlay"><div class="spinner"></div></div>');
