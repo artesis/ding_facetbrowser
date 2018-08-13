@@ -14,7 +14,7 @@ function ding_facetbrowser_settings($form_state) {
   form_load_include($form_state, 'inc', 'ding_facetbrowser', 'ding_facetbrowser.admin');
   $form = array();
   $facets = variable_get('ding_facetbrowser_facets', array());
-  
+
   $form['description'] = array(
     '#markup' => '<p>' . t('Configure facets shown in the facetbrowser. Facet names can be found at <a href="http://oss.dbc.dk/wiki/bin/view/Databroend/OpenSearchDocIndexes">DBC wiki</a> and is usually named <em>facet.something</em>.') . '</p>',
   );
@@ -32,11 +32,20 @@ function ding_facetbrowser_settings($form_state) {
   $form['ding_facetbrowser_number_of_terms'] = array(
     '#type' => 'select',
     '#title' => t('Number of terms'),
-    '#description' => t('The number of facts terms to display in each facet group.'),
+    '#description' => t('The number of facet terms to display in each facet group.'),
     '#options' => drupal_map_assoc(range(1, 15)),
     '#default_value' => $number_of_terms,
   );
-  
+
+  $facet_term_count_limit = variable_get('ding_facetbrowser_term_count_limit', 50);
+  $form['ding_facetbrowser_term_count_limit'] = array(
+    '#type' => 'select',
+    '#title' => t('Hard limit of terms'),
+    '#description' => t('Fetch this total number of facet terms.'),
+    '#options' => drupal_map_assoc(range(10, 100, 10)),
+    '#default_value' => $facet_term_count_limit,
+  );
+
   $form['ding_facetbrowser_facets'] = array(
     '#tree' => TRUE,
     '#weight' => -20,
@@ -147,6 +156,7 @@ function ding_facetbrowser_settings_submit($form, &$form_state) {
   variable_set('ding_facetbrowser_facets', $facets);
   variable_set('ding_facetbrowser_showcount', $form_state['values']['ding_facetbrowser_showcount']);
   variable_set('ding_facetbrowser_number_of_terms', $form_state['values']['ding_facetbrowser_number_of_terms']);
+  variable_set('ding_facetbrowser_term_count_limit', $form_state['values']['ding_facetbrowser_term_count_limit']);
   drupal_set_message(t('The configuration options have been saved.'));
 }
 
