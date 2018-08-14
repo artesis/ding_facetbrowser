@@ -386,5 +386,7 @@ function _ding_facetbrowser_translate_pane_title(&$vars) {
  * Implements hook_ting_pre_execute().
  */
 function ding_facetbrowser_ting_pre_execute($request) {
-  $request->setTermsInFacets(variable_get('ding_facetbrowser_term_count_limit', 50));
+  if ($request instanceof TingSearchRequest) {
+    $request->setTermsInFacets(variable_get('ding_facetbrowser_term_count_limit', 50));
+  }
 }
