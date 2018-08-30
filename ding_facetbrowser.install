@@ -18,3 +18,26 @@ function ding_facetbrowser_requirements($phase) {
   return $requirements;
 }
 
+/**
+ * Implements hook_uninstall().
+ */
+function ding_facetbrowser_uninstall() {
+  $variables = array(
+    'ding_facetbrowser_facets',
+    'ding_facetbrowser_showcount',
+    'ding_facetbrowser_number_of_terms',
+    'ding_facetbrowser_term_count_limit'
+  );
+
+  foreach ($variables as $variable) {
+    variable_del($variable);
+  }
+}
+
+/**
+ * Increase amount of total visible facet terms.
+ */
+function ding_facetbrowser_update_7001() {
+  variable_set('ding_facetbrowser_term_count_limit', 50);
+}
+

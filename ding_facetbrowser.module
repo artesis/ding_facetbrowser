@@ -372,12 +372,21 @@ function ding_facetbrowser_theme_registry_alter(&$theme_registry) {
 /**
  * Translate pane title.
  *
- * @param attay $vars
+ * @param array $vars
  *   Pane data.
  */
 function _ding_facetbrowser_translate_pane_title(&$vars) {
   // Translate only overriden title of ding_facetbrowser.
   if ($vars['pane']->type == 'ding_facetbrowser' && $vars['pane']->configuration['override_title']) {
     $vars['title'] = t($vars['title']);
+  }
+}
+
+/**
+ * Implements hook_ting_pre_execute().
+ */
+function ding_facetbrowser_ting_pre_execute($request) {
+  if ($request instanceof TingSearchRequest) {
+    $request->setTermsInFacets(variable_get('ding_facetbrowser_term_count_limit', 50));
   }
 }
